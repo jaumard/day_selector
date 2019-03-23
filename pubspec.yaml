@@ -1,6 +1,6 @@
 name: day_selector
 description: Flutter widget to select week day easily, week day or workable day mode are available, same as unique, multiple selection
-version: 0.0.1
+version: 1.0.0
 author: jaumard <jimmy.aumard@gmail.com>
 homepage: https://github.com/jaumard/day_selector.git
 

@@ -14,9 +14,10 @@ class DaySelector extends StatefulWidget {
   static const sunday = 128;
   final int mode;
   final Color color;
+  final int value;
   final Function(int) onChange;
 
-  const DaySelector({Key key, this.mode = modeWorkdays, this.onChange, this.color}) : super(key: key);
+  const DaySelector({Key key, this.mode = modeWorkdays, this.onChange, this.color, this.value}) : super(key: key);
 
   @override
   DaySelectorState createState() {
@@ -25,10 +26,26 @@ class DaySelector extends StatefulWidget {
 }
 
 class DaySelectorState extends State<DaySelector> {
-  var selectedDays = 1;
+  var _selectedDays = 1; // no day selected
+
+  int get selectedDays => _selectedDays == 1 ? null : _selectedDays;
 
   bool _isDayAllowed(int day) {
     return widget.mode & day == day;
+  }
+
+  @override
+  void initState() {
+    _selectedDays = widget.value ?? 1;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(DaySelector oldWidget) {
+    if (_selectedDays != widget.value) {
+      _selectedDays = widget.value ?? 1;
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -45,24 +62,26 @@ class DaySelectorState extends State<DaySelector> {
       DaySelector.sunday,
     ];
 
-    _Day _getDay(int index) => _Day(
+    _Day _getDay(int index) {
+      return _Day(
           color: widget.color,
           label: labels[index],
-          selected: selectedDays & values[index] == values[index],
+          selected: _selectedDays & values[index] == values[index],
           value: values[index],
           onTap: (value) {
             setState(() {
-              if (selectedDays & value == value) {
-                selectedDays &= ~value;
+              if (_selectedDays & value == value) {
+                _selectedDays &= ~value;
               } else {
-                selectedDays |= value;
+                _selectedDays |= value;
               }
               if (widget.onChange != null) {
-                widget.onChange(selectedDays);
+                widget.onChange(_selectedDays);
               }
             });
           },
         );
+    }
 
     if (_isDayAllowed(DaySelector.monday)) {
       days.add(_getDay(0));
